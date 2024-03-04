@@ -1,6 +1,7 @@
 import streamlit as st
 from google.cloud import firestore
 import base64
+import cv2
 import tempfile
 import numpy as np
 import matplotlib.pyplot as plt
