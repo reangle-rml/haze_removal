@@ -8,7 +8,7 @@ import base64
 from streamlit_modal import Modal
 
 db = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
-modal = Modal(key="Show Image",title="Image info",max_width=1000,padding=50) # กำหนด Modal หรือ form ที่ใช้สำหรับแสดงข้อมูลรูปภาพ
+modal = Modal(key="Show Image",title="Image info",max_width=744,padding=20) # กำหนด Modal หรือ form ที่ใช้สำหรับแสดงข้อมูลรูปภาพ
 global_search_date = None # กำหนดค่าตัวแปรให้เป็น None
 global_time_start = None # กำหนดค่าตัวแปรให้เป็น None
 global_time_end = None # กำหนดค่าตัวแปรให้เป็น None
@@ -71,7 +71,7 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
     st.title("Gallery Page") # แสดง title
     header = st.columns(4) # สร้าง column 4 ช่องสำหรับรองรับระบบค้นหา
     filtered_images = [] # ประกาศ filter_images สำหรับใช้ในการแสดงรูปภาพ
-
+    
     with header[0]: # เลือก header index แรก
         global_search_date = st.date_input("Select Date",value=None) # สร้าง input ประเภท date โดยมีค่าเริ่มต้นเป็น None เก็บไว้ที่ global_search_date
         if global_search_date: # ถ้า global_search_date มีการกำหนดค่าให้ทำตามเงื่อนไข
@@ -126,14 +126,16 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
                                 st.image(image_removed,width=width_im) # แสดงรูปภาพที่ผ่านการลบหมอกแล้ว โดยมีกว้้าง = width_im ที่กำหนด
                                 open_modal = st.button(label='Details',key=f"Details {i}") # สร้างปุ่ม Details โดยมี key เป็น Details ตามด้วยค่าของ i ในปัจจุบัน
                                 if open_modal: # ถ้า open_modal มีการกด หรือมีค่าเป็น True
-                                    with modal.container(): # แสดง modal ขึ้นมาเป็นหน้าจอเพื่อแสดงข้อมูลต่าง ๆ
-                                        col1, col2 = st.columns(2) # สร้าง column 2 ช่องเพื่อกำหนดโครงสร้างการแสดงรูป
-                                        col1.image(image_before,use_column_width=True) # แสดงรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
-                                        col1.image(image=base64_to_histogram(image_before),use_column_width=True) # แสดง histogram จากรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
-                                        col2.image(image_removed,use_column_width=True) # แสดงรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
-                                        col2.image(image=base64_to_histogram(image_removed),use_column_width=True) # แสดง histogram จากรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
-                                        st.write(show_date) # แสดงวันเดือนปี ที่เพิ่มข้อมูล
-                                        st.write(show_time) # แสดงเวลา ที่ทำการเพิ่มข้อมูล
+                                    modal.open()
+    if modal.is_open():
+        with modal.container(): # แสดง modal ขึ้นมาเป็นหน้าจอเพื่อแสดงข้อมูลต่าง ๆ
+            col1, col2 = st.columns(2) # สร้าง column 2 ช่องเพื่อกำหนดโครงสร้างการแสดงรูป
+            col1.image(image_before,use_column_width=True) # แสดงรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
+            col1.image(image=base64_to_histogram(image_before),use_column_width=True) # แสดง histogram จากรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
+            col2.image(image_removed,use_column_width=True) # แสดงรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
+            col2.image(image=base64_to_histogram(image_removed),use_column_width=True) # แสดง histogram จากรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
+            st.write(show_date) # แสดงวันเดือนปี ที่เพิ่มข้อมูล
+            st.write(show_time) # แสดงเวลา ที่ทำการเพิ่มข้อมูล
                                                               
 if __name__ == "__main__":
     gallery() # เรียกใช้ function manual() 
