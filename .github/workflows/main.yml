@@ -1,0 +1,17 @@
+name: key
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  my_job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use the secret
+        run: echo "The secret is ${{ secrets.FIRESTORE_KEY }}"
