@@ -7,3 +7,4 @@ Pillow
 image-dehazer==0.0.9
 apscheduler
 streamlit-modal
+libgl1-mesa-glx
