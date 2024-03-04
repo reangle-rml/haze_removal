@@ -12,7 +12,7 @@ import requests
 import io
 import image_dehazer
 
-db = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
+db = firestore.Client.from_service_account_json("$MY_SECRET_KEY") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
 st.session_state.button = False # set state button ให้เป็น False เพื่อยกเลิก session สำหรับ ค้นหา ในหน้า Gallery
 
 def base64_to_histogram(base64_image): # function ที่เปลี่ยนจาก base64 ให้เป็น histogram
