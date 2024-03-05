@@ -16,6 +16,7 @@ from firebase_admin import credentials, db
 
 dab = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json 
 cred = credentials.Certificate("firestore_key.json") # ยืนยันตัวตน firebase จากไฟล์ firestore-key.json
+initialize_app(cred, {"databaseURL": "https://haze-remover-default-rtdb.asia-southeast1.firebasedatabase.app/"})
 st.session_state.button = False # set state button ให้เป็น False เพื่อยกเลิก session สำหรับ ค้นหา ในหน้า Gallery
 scheduler = BackgroundScheduler() # กำหนดตัวแปร ที่ใช้ในการทำงานเบื้องหลัง
 document_ref = '' # กำหนดตัวแปร document_ref
