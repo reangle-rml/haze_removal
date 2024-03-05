@@ -13,19 +13,17 @@ from apscheduler.schedulers.background import BackgroundScheduler
 import image_dehazer
 import urllib.request
 from firebase_admin import credentials,initialize_app ,db
-
+import firebase_admin
 try:
     # ลองดึง Firebase app ที่ถูก initialize
     app = firebase_admin.get_app()
     print("Firebase app is already initialized.")
 except ValueError:
-    # ถ้าไม่มี Firebase app ที่ถูก initialize ให้ initialize ใหม่
-    cred = credentials.Certificate("path/to/firebase/credentials.json")
+    cred = credentials.Certificate("firestore_key.json") # ยืนยันตัวตน firebase จากไฟล์ firestore-key.json
     initialize_app(cred, {"databaseURL": "https://haze-remover-default-rtdb.asia-southeast1.firebasedatabase.app/"})
     print("Firebase app initialized.")
 
 dab = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json 
-cred = credentials.Certificate("firestore_key.json") # ยืนยันตัวตน firebase จากไฟล์ firestore-key.json
 
 st.session_state.button = False # set state button ให้เป็น False เพื่อยกเลิก session สำหรับ ค้นหา ในหน้า Gallery
 scheduler = BackgroundScheduler() # กำหนดตัวแปร ที่ใช้ในการทำงานเบื้องหลัง
