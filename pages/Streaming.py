@@ -12,7 +12,7 @@ import io
 from apscheduler.schedulers.background import BackgroundScheduler
 import image_dehazer
 import urllib.request
-from firebase_admin import credentials, db
+from firebase_admin import credentials,initialize_app ,db
 
 dab = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json 
 cred = credentials.Certificate("firestore_key.json") # ยืนยันตัวตน firebase จากไฟล์ firestore-key.json
