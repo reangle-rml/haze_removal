@@ -9,7 +9,6 @@ from io import BytesIO
 from PIL import Image
 from datetime import datetime
 import io
-import time
 from apscheduler.schedulers.background import BackgroundScheduler
 import image_dehazer
 import urllib.request
@@ -106,7 +105,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
     col = st.columns(3) # สร้าง column 3 ช่อง สำหรับเสร็จกึ่งกลางให้ปุ่ม
  
     with col[1]: # ช่องสอง
-        capture_button = st.button('Capture Image',use_container_width=True,disabled=st.session_state.cap) # สร้างปุ่มสำหรับบันทึกภาพจากกล้องถ่ายทอดสด
+        capture_button = st.button('Capture Image',use_container_width=True) # สร้างปุ่มสำหรับบันทึกภาพจากกล้องถ่ายทอดสด
 
     while st.session_state.running==True: # ลูปที่ทำงานเมื่อ session_state.running มีค่าเท่ากับ True
         live_data = live.get()
