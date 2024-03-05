@@ -7,4 +7,4 @@ Pillow
 image-dehazer==0.0.9
 apscheduler
 streamlit-modal
-
+firebase-admin==6.4.0
