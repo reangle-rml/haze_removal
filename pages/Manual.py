@@ -10,9 +10,9 @@ def manual(): # function manual คือฟังก์ชั่นหลัก
     col=st.columns(5) # สร้าง columns 5 ช่อง
     with col[1]: # เลือก col ที่เป็นตำแหน่ง 1 ซ้ายกลาง
         with st.container(border=True): # สร้างกล่อง Container เพื่อเก็บข้อมูล และตั้งเป็นแสดงขอบ
-            st.subheader("Streaimg") # แสดง subheader
+            st.subheader("Camera") # แสดง subheader
             st.divider() # สร้างเส้นใต้
-            st.write("<center>ระบบ Live Streaming ที่ใช้สำหรับการตรวจจับหมอก สามารถกดปุ่ม Capture เพื่อบันทึกภาพนิ่งได้ เพื่อนำไปประมวลผลในการลบหมอก ระบบ Live Streaming จะทำการ Capture อัตโนมัติทุก 30 นาที</center>", unsafe_allow_html=True) # ใช้ unsafe_allow_html=True เพื่อให้สามารถใช้ css ในข้อมูลได้ ซึ่งก็คือ <center>
+            st.write("<center>ระบบ Live Camera ที่ใช้สำหรับการตรวจจับหมอก สามารถกดปุ่ม Capture เพื่อบันทึกภาพนิ่งได้ เพื่อนำไปประมวลผลในการลบหมอก ระบบ Live Camera จะทำการ Capture อัตโนมัติทุก 30 นาที</center>", unsafe_allow_html=True) # ใช้ unsafe_allow_html=True เพื่อให้สามารถใช้ css ในข้อมูลได้ ซึ่งก็คือ <center>
             st.divider() # สร้างเส้นใต้
             st.write('') # สร้างการเว้นบรรทัด
             st.image("images/capture1.png") # แสดงรูป capture1.png
