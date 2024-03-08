@@ -16,7 +16,6 @@ def manual(): # function manual คือฟังก์ชั่นหลัก
             st.divider() # สร้างเส้นใต้
             st.write('') # สร้างการเว้นบรรทัด
             st.image("images/capture1.png") # แสดงรูป capture1.png
-            st.image("images/capture2.png") # แสดงรูป capture2.png
     with col[2]: # เลือก col ที่เป็นตำแหน่ง 2 กลาง
         with st.container(border=True): # สร้างกล่อง Container เพื่อเก็บข้อมูล และตั้งเป็นแสดงขอบ
             st.subheader("Upload") #แสดง subheader
