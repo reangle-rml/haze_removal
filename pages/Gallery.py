@@ -7,14 +7,14 @@ import io
 import base64
 from streamlit_modal import Modal
 
-db = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
-modal = Modal(key="Show Image",title="Image info",max_width=744,padding=20) # กำหนด Modal หรือ form ที่ใช้สำหรับแสดงข้อมูลรูปภาพ
+db = firestore.Client.from_service_account_json("firestore-key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
 global_search_date = None # กำหนดค่าตัวแปรให้เป็น None
 global_time_start = None # กำหนดค่าตัวแปรให้เป็น None
 global_time_end = None # กำหนดค่าตัวแปรให้เป็น None
+modal = Modal(key="Image",title="Image info",max_width=744,padding=20) # กำหนด Modal หรือ form ที่ใช้สำหรับแสดงข้อมูลรูปภาพ
 
-if 'button' not in st.session_state: # ถ้า session_state ไม่มีชื่อ button ให้ทำตามเงื่อนไข
-    st.session_state.button = False # กำหนดให้ session_state.button ให้เป็น False เพื่อกำหนดค่าเริ่มต้น
+if 'result' not in st.session_state: # ถ้า session_state ไม่มีชื่อ button ให้ทำตามเงื่อนไข
+    st.session_state.result = [] # กำหนดให้ session_state.button ให้เป็น False เพื่อกำหนดค่าเริ่มต้น
 
 def base64_to_histogram(base64_image): # function ที่เปลี่ยนจาก base64 ให้เป็น histogram
     binary_image = base64.b64decode(base64_image) # ทำการแปลง base64 ให้เป็น binary
@@ -70,8 +70,8 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
     st.set_page_config(layout="wide") # set หน้า page เป็นความ wide (จอกว้าง)
     st.title("Gallery Page") # แสดง title
     header = st.columns(4) # สร้าง column 4 ช่องสำหรับรองรับระบบค้นหา
-    filtered_images = [] # ประกาศ filter_images สำหรับใช้ในการแสดงรูปภาพ
-    
+   
+    open_modals = []
     with header[0]: # เลือก header index แรก
         global_search_date = st.date_input("Select Date",value=None) # สร้าง input ประเภท date โดยมีค่าเริ่มต้นเป็น None เก็บไว้ที่ global_search_date
         if global_search_date: # ถ้า global_search_date มีการกำหนดค่าให้ทำตามเงื่อนไข
@@ -94,26 +94,29 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
         search_button=st.button("Search") # สร้างปุ่มสำหรับค้นหา เก็บไว้ที่ serach_button
     collection_ref1 = db.collection("Images") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
     docs1 = collection_ref1.stream() # ดึงข้อมูลจากเส้นทางอ้างอิง
-    width_im=200 # กำหนดตัวแปร width_im เป็น 200 เพื่อใช้ในการกำหนดความกว้างของรูปภาพที่จะเอามาแสดง
     col = st.columns(6) # สร้าง column 6 ช่องสำหรับรองรับรูปที่จะนำมาแสดง
-    if search_button or st.session_state.button: # ถ้า search_button หรือ st.session_state.button เป็น True
-        st.session_state.button = True # กำหนด st.session_state.button เป็น True เพื่อให้การค้นหายังคงค้าไว้ หากยังอยู่ในหน้านี้
+    if(search_button):
+        st.session_state.result = []
+        for i, doc in enumerate(docs1): # ลูปตามจำนวนข้อมูลในฐานข้อมูลจากเส้นทางอ้างอิง
+                    data = doc.to_dict() # ดึงข้อมูลจากเส้นทางอ้างอิง
+                    if global_search_date is not None: # ถ้า global_search_date ไม่ใช่ค่า None 
+                        if filter_by_date(doc, global_search_date): # ถ้าผ่านเงื่อนไขของ ฟังก์ชั่น filter_by_date จะ return ค่า true 
+                            if global_time_start is not None and filter_by_time_start(doc, global_time_start): # ถ้า global_time_start ไม่ใช่ค่า None ผ่านเงื่อนไขของ ฟังก์ชั่น filter_by_date จะ return ค่า true 
+                                if global_time_end is not None and filter_by_time_end(doc, global_time_end): # ถ้า global_time_end ไม่ใช่ค่า None ผ่านเงื่อนไขของ ฟังก์ชั่น filter_by_date จะ return ค่า true 
+                                    st.session_state.result.append(data) # เพิ่มข้อมูล data ที่ผ่านเงื่อนไขลงใน filtered_images เพื่อนำไปแสดงผลลัพธ์การค้นหา
+                                elif global_time_end is None: # ถ้า global_time_end เป็นค่า None 
+                                    st.session_state.result.append(data) # เพิ่มข้อมูล data ที่ผ่านเงื่อนไขลงใน filtered_images เพื่อนำไปแสดงผลลัพธ์การค้นหา
+                            elif global_time_start is None and global_time_end is None: # ถ้า global_time_start เป็นค่า None 
+                                st.session_state.result.append(data) # เพิ่มข้อมูล data ที่ผ่านเงื่อนไขลงใน filtered_images เพื่อนำไปแสดงผลลัพธ์การค้นหา
+                    else: # ถ้าไม่มีการกำหนดค่า global_serach_date จะทำตามเงื่อนไข
+                        st.session_state.result.append(data) # เก็บข้อมูลทุกอย่าง
+                    search_button=False
+    if st.session_state.result: # ถ้า search_button หรือ st.session_state.button เป็น True
+
         with st.spinner("Loading Images..."): # ทำการโชว์การหมุนวน เพื่อแสดงว่า กำลังโหลด
-            for i, doc in enumerate(docs1): # ลูปตามจำนวนข้อมูลในฐานข้อมูลจากเส้นทางอ้างอิง
-                data = doc.to_dict() # ดึงข้อมูลจากเส้นทางอ้างอิง
-                if global_search_date is not None: # ถ้า global_search_date ไม่ใช่ค่า None 
-                    if filter_by_date(doc, global_search_date): # ถ้าผ่านเงื่อนไขของ ฟังก์ชั่น filter_by_date จะ return ค่า true 
-                        if global_time_start is not None and filter_by_time_start(doc, global_time_start): # ถ้า global_time_start ไม่ใช่ค่า None ผ่านเงื่อนไขของ ฟังก์ชั่น filter_by_date จะ return ค่า true 
-                            if global_time_end is not None and filter_by_time_end(doc, global_time_end): # ถ้า global_time_end ไม่ใช่ค่า None ผ่านเงื่อนไขของ ฟังก์ชั่น filter_by_date จะ return ค่า true 
-                                filtered_images.append(data) # เพิ่มข้อมูล data ที่ผ่านเงื่อนไขลงใน filtered_images เพื่อนำไปแสดงผลลัพธ์การค้นหา
-                            elif global_time_end is None: # ถ้า global_time_end เป็นค่า None 
-                                filtered_images.append(data) # เพิ่มข้อมูล data ที่ผ่านเงื่อนไขลงใน filtered_images เพื่อนำไปแสดงผลลัพธ์การค้นหา
-                        elif global_time_start is None and global_time_end is None: # ถ้า global_time_start เป็นค่า None 
-                            filtered_images.append(data) # เพิ่มข้อมูล data ที่ผ่านเงื่อนไขลงใน filtered_images เพื่อนำไปแสดงผลลัพธ์การค้นหา
-                else: # ถ้าไม่มีการกำหนดค่า global_serach_date จะทำตามเงื่อนไข
-                     filtered_images.append(data) # เก็บข้อมูลทุกอย่าง
-            for i, data in enumerate(filtered_images): # ลูปตามจำนวน filtered_images 
+            for i, data in enumerate(st.session_state.result): # ลูปตามจำนวน filtered_images             
                     image_before = data.get("img_original", None) # ดึงค่า img_original มาจากฐานข้อมูล หากไม่มีให้เป็น None เก็บไว้ที่ image_before
+                    unique_identifier = data.get('log', {}).get('date', None)
                     image_removed = data.get("img_removed", None) # ดึงค่า img_removed มาจากฐานข้อมูล หากไม่มีให้เป็น None เก็บไว้ที่ image_removed
                     log_time = data.get("log",None) # ดึงค่า log หากไม่มีให้เป็น None เก็บไว้ที่ log_time
                     show_date = log_time["date"].strftime("Date %Y-%m-%d") # ดึงค่า date จาก log_time แล้วแปลงเป็น ปี-เดือน-วัน เก็บไว้ที่ show_date
@@ -122,20 +125,21 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
                         col = st.columns(6) # สร้าง column ใหม่ 6 ช่องสำหรับรองรับรูปที่จะนำมาแสดง
                     if image_before: # ถ้ามีข้อมูลในตัวแปร image_before
                         with col[i%6]: # เลือก col ในตำแหน่งที่ได้จากการนำ i ไปหาร 6 แล้วได้เศษ เลือกใช้ตำแหน่งจาก เศษของผลหาร 
-                            with st.container(): # สร้าง container สำหรับเก็บรูปภาพ
-                                st.image(image_removed,width=width_im) # แสดงรูปภาพที่ผ่านการลบหมอกแล้ว โดยมีกว้้าง = width_im ที่กำหนด
-                                open_modal = st.button(label='Details',key=f"Details {i}") # สร้างปุ่ม Details โดยมี key เป็น Details ตามด้วยค่าของ i ในปัจจุบัน
-                                if open_modal: # ถ้า open_modal มีการกด หรือมีค่าเป็น True
-                                    modal.open()
-    if modal.is_open():
-        with modal.container(): # แสดง modal ขึ้นมาเป็นหน้าจอเพื่อแสดงข้อมูลต่าง ๆ
-            col1, col2 = st.columns(2) # สร้าง column 2 ช่องเพื่อกำหนดโครงสร้างการแสดงรูป
-            col1.image(image_before,use_column_width=True) # แสดงรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
-            col1.image(image=base64_to_histogram(image_before),use_column_width=True) # แสดง histogram จากรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
-            col2.image(image_removed,use_column_width=True) # แสดงรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
-            col2.image(image=base64_to_histogram(image_removed),use_column_width=True) # แสดง histogram จากรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
-            st.write(show_date) # แสดงวันเดือนปี ที่เพิ่มข้อมูล
-            st.write(show_time) # แสดงเวลา ที่ทำการเพิ่มข้อมูล
+                                st.image(image_removed,use_column_width=True) # แสดงรูปภาพที่ผ่านการลบหมอกแล้ว โดยมีกว้้าง = width_im ที่กำหนด
+                                
+                                open_modal = st.button(label=f'Details',key=unique_identifier,use_container_width=True) # สร้างปุ่ม Details โดยมี key เป็น Details ตามด้วยค่าของ i ในปัจจุบัน
+                        if open_modal:
+                            with modal.container(): # แสดง modal ขึ้นมาเป็นหน้าจอเพื่อแสดงข้อมูลต่าง ๆ
+                                col1, col2 = st.columns(2) # สร้าง column 2 ช่องเพื่อกำหนดโครงสร้างการแสดงรูป
+                                col1.image(image_before,use_column_width=True) # แสดงรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
+                                col1.image(image=base64_to_histogram(image_before),use_column_width=True) # แสดง histogram จากรูปภาพต้นฉบับ โดยมีความกว้างเต็ม column
+                                col2.image(image_removed,use_column_width=True) # แสดงรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
+                                col2.image(image=base64_to_histogram(image_removed),use_column_width=True) # แสดง histogram จากรูปภาพหลังลบหมอก โดยมีความกว้างเต็ม column
+                                st.write(show_date) # แสดงวันเดือนปี ที่เพิ่มข้อมูล
+                                st.write(show_time) # แสดงเวลา ที่ทำการเพิ่มข้อมูล
+            
+                                               
+    
                                                               
 if __name__ == "__main__":
     gallery() # เรียกใช้ function manual() 
