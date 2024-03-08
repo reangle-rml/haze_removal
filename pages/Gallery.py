@@ -7,7 +7,7 @@ import io
 import base64
 from streamlit_modal import Modal
 
-db = firestore.Client.from_service_account_json("firestore-key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
+db = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
 global_search_date = None # กำหนดค่าตัวแปรให้เป็น None
 global_time_start = None # กำหนดค่าตัวแปรให้เป็น None
 global_time_end = None # กำหนดค่าตัวแปรให้เป็น None
