@@ -79,7 +79,7 @@ def main(): # function main เป็นฟังก์ชั่นหลัก�
     st.set_page_config(layout="centered") # set หน้า page เป็นความ centered (จอแคบ)
     st.header(":rainbow[Welcome to Haze Removal Image Enchancement Perspective for IoT device]",) # แสดง header
     collection_ref = db.collection("Images") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
-    uploaded_image = st.file_uploader("Choose an Image.") # สร้างที่ upload ไฟล์เก็บไว้ที่ uploaded_image
+    uploaded_image = st.file_uploader("Choose an Image.",type=['png','jpg','jpeg'])
     document_ref = '' # สร้างตัวแปร document_ref เอาไว้
     if uploaded_image is not None: # ถ้ามีการอัปโหลดไฟล์ จะทำตามเงื่อนไข
         with tempfile.NamedTemporaryFile(delete=False) as temp_file: # สร้าง tempfile สำรหับจัดเก็บรูปขึ้นมา
