@@ -80,14 +80,14 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
             button_check = True # กำหนดให้ button_check เป็น True
 
     with header[1]: # เลือก header index สอง
-        global_time_start = st.time_input("Time Start",key="time_start",value=None,disabled=button_check) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check และเก็บไว้ที่ global_time_start
+        global_time_start = st.time_input("Time Start",key="time_start",value=None,disabled=button_check,step=1800) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check และเก็บไว้ที่ global_time_start
         if global_time_start and global_search_date: # ถ้า global_time_start และ global_search_date มีการกำหนดค่าให้ทำตามเงื่อนไข
             button_check2 = False # กำหนดให้ button_check2 เป็น False
         else: # ไม่เข้าเงื่อนไขข้างต้น
             button_check2 = True # กำหนดให้ button_check2 เป็น True
      
     with header[2]: # เลือก header index สาม
-        global_time_end = st.time_input("Time End",key="time_end",value=None,disabled=button_check2) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check2 และเก็บไว้ที่ global_time_end
+        global_time_end = st.time_input("Time End",key="time_end",value=None,disabled=button_check2,step=1800) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check2 และเก็บไว้ที่ global_time_end
     with header[3]: # เลือก header index สี่
         st.write("") # สร้างการเว้นบรรทัด
         st.write("") # สร้างการเว้นบรรทัด
