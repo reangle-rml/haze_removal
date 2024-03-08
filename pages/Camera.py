@@ -108,7 +108,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
     #st.session_state.running=True # กำหนด sestion_state.running ให้เป็น True เพื่อเริ่มการทำงานของกล้องอัตโนมัติ
     st.set_page_config(layout="centered") # set หน้า page เป็นความ centered (จอแคบ)
     st.header(":rainbow[Welcome to Haze Removal Image Enchancement Perspective for IoT device]",) # แสดง header
-    st.title("Streaming") # แสดง
+    st.title("Camera") # แสดง
     #cap = cv2.VideoCapture(ip_camera_url)  # อ่าน video จาก urlที่ได้
     image_slot = st.empty() # สร้างพื้นที่ empty สำหรับวางที่ streaming
     col = st.columns(3) # สร้าง column 3 ช่อง สำหรับเสร็จกึ่งกลางให้ปุ่ม
