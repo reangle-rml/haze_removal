@@ -69,32 +69,40 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
     global global_search_date, global_time_start, global_time_end, modal # กำหนดค่าตัวแปรที่ได้ประกาศเป็น global ไว้ก่อนหน้านี้
     st.set_page_config(layout="wide") # set หน้า page เป็นความ wide (จอกว้าง)
     st.title("Gallery Page") # แสดง title
-    header = st.columns(4) # สร้าง column 4 ช่องสำหรับรองรับระบบค้นหา
+    header = st.columns(5) # สร้าง column 4 ช่องสำหรับรองรับระบบค้นหา
    
     open_modals = []
-    with header[0]: # เลือก header index แรก
+    with header[0]:
+        type_selection = st.selectbox('Choose the source of the image',('Upload','Camera'))
+    with header[1]: # เลือก header index แรก
         global_search_date = st.date_input("Select Date",value=None) # สร้าง input ประเภท date โดยมีค่าเริ่มต้นเป็น None เก็บไว้ที่ global_search_date
         if global_search_date: # ถ้า global_search_date มีการกำหนดค่าให้ทำตามเงื่อนไข
             button_check = False # กำหนดให้ button_check เป็น False
         else: # ไม่เข้าเงื่อนไขข้างต้น
             button_check = True # กำหนดให้ button_check เป็น True
 
-    with header[1]: # เลือก header index สอง
+    with header[2]: # เลือก header index สอง
         global_time_start = st.time_input("Time Start",key="time_start",value=None,disabled=button_check,step=1800) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check และเก็บไว้ที่ global_time_start
         if global_time_start and global_search_date: # ถ้า global_time_start และ global_search_date มีการกำหนดค่าให้ทำตามเงื่อนไข
             button_check2 = False # กำหนดให้ button_check2 เป็น False
         else: # ไม่เข้าเงื่อนไขข้างต้น
             button_check2 = True # กำหนดให้ button_check2 เป็น True
      
-    with header[2]: # เลือก header index สาม
-        global_time_end = st.time_input("Time End",key="time_end",value=None,disabled=button_check2,step=1800) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check2 และเก็บไว้ที่ global_time_end
-    with header[3]: # เลือก header index สี่
+    with header[3]: # เลือก header index สาม
+        global_time_end = st.time_input("Time End",key="time_end",value=None,disabled=button_check2) # สร้าง input ประเภท time โดยมีค่าเริ่มต้นเป็น None และให้การเปิด-ปิดการใช้งานเป็นไปตามตัวแปร button_check2 และเก็บไว้ที่ global_time_end
+    with header[4]: # เลือก header index สี่
         st.write("") # สร้างการเว้นบรรทัด
         st.write("") # สร้างการเว้นบรรทัด
-        search_button=st.button("Search") # สร้างปุ่มสำหรับค้นหา เก็บไว้ที่ serach_button
-    collection_ref1 = db.collection("Images") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
-    docs1 = collection_ref1.stream() # ดึงข้อมูลจากเส้นทางอ้างอิง
+        search_button=st.button("Search",use_container_width=True) # สร้างปุ่มสำหรับค้นหา เก็บไว้ที่ serach_button
+     # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
+    
     col = st.columns(6) # สร้าง column 6 ช่องสำหรับรองรับรูปที่จะนำมาแสดง
+
+    if type_selection=='Upload':
+        collection_ref1 = db.collection("Images_upload")
+    elif type_selection=='Camera':
+        collection_ref1 = db.collection("Images_camera")
+    docs1 = collection_ref1.stream() # ดึงข้อมูลจากเส้นทางอ้างอิง
     if(search_button):
         st.session_state.result = []
         for i, doc in enumerate(docs1): # ลูปตามจำนวนข้อมูลในฐานข้อมูลจากเส้นทางอ้างอิง
