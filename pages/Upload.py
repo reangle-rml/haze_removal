@@ -77,7 +77,7 @@ def frame_to_base64(frame): # function ในการแปลง frame ให�
 
 def main(): # function main เป็นฟังก์ชั่นหลักในการทำงาน
     st.set_page_config(layout="centered") # set หน้า page เป็นความ centered (จอแคบ)
-    st.header(":rainbow[Welcome to Haze Removal Image Enchancement Perspective for IoT device]",) # แสดง header
+    st.header(":rainbow[Haze Removal Image Enchancement Perspective for IoT device]",) # แสดง header
     collection_ref = db.collection("Images") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
     uploaded_image = st.file_uploader("Choose an Image.",type=['png','jpg','jpeg'])
     document_ref = '' # สร้างตัวแปร document_ref เอาไว้
