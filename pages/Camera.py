@@ -23,15 +23,15 @@ except ValueError:
     initialize_app(cred, {"databaseURL": "https://haze-remover-default-rtdb.asia-southeast1.firebasedatabase.app/"})
     print("Firebase app initialized.")
 
-if 'sendimg' not in st.session_state: # ถ้า session_state ไม่มีชื่อ send ให้ทำตามเงื่อนไข
-    st.session_state.sendimg = False # กำหนดให้ session_state.send ให้เป็น False เพื่อกำหนดค่าเริ่มต้น
-
 dab = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json 
+
+st.session_state.button = False # set state button ให้เป็น False เพื่อยกเลิก session สำหรับ ค้นหา ในหน้า Gallery
 scheduler = BackgroundScheduler() # กำหนดตัวแปร ที่ใช้ในการทำงานเบื้องหลัง
 document_ref = '' # กำหนดตัวแปร document_ref
 collection_ref = dab.collection("Images_camera") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
 live = db.reference("image_original") # สร้างเส้นทางอ้างอิงไปยัง image_original ไปยัง realtime database
 ip_camera_url = "http://192.168.137.94/cam-lo.jpg" # กำหนด ip_camera_url
+old_time = '' # กำหนดตัวแปร old_time 
 
 def base64_to_histogram(base64_image): # function ที่เปลี่ยนจาก base64 ให้เป็น histogram
     binary_image = base64.b64decode(base64_image) # ทำการแปลง base64 ให้เป็น binary
@@ -83,29 +83,28 @@ def removehaze(img): # function สำหรับการลบหมอก �
     return base64 # return base64 รูปภาพที่ทำการลบหมอกและปรับแต่งแล้ว
 
 def auto_cap(): # function auto_cap เป็น funtion สำหรับการทำงานเบื้องหลัง หรือการทำงานตามเวลาที่กำหนด
-    if st.session_state.sendimg == False:
-        live_data = live.get()
-        streaming = "data:image/jpeg;base64,"+live_data
-        img_ori = base64_to_img(live_data)
-        removed=removehaze(img_ori) # ทำการลบหมอก
-        current_timestamp = datetime.now() # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
-        if removed is not None: # ถ้า removed ไม่ใช่ค่า None ให้ทำตามเงื่อนไข
-                        data_to_add = {  # ข้อมูลที่ต้องการเพิ่มลงฐานข้อมูล
-                        "img_original": streaming, # รูปภาพ base64 ต้นฉบับ
-                        "img_removed": removed, # รูปภาพ base64 ที่ผ่านการลบหมอก
-                        "log": { # หัวข้อ log
-                            "date": current_timestamp, # เวลาปัจจุบัน
-                        }
-                    }   
-                        document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
-                        st.session_state.sendimg = True
-        return print("Auto Capture!") # print add streaming 
-    else:
-        return print("Already send!")
-    
+    global old_time # เรียกใช้ตัวแปร old_time จาก global
+    live_data = live.get()
+    streaming = "data:image/jpeg;base64,"+live_data
+    img_ori = base64_to_img(live_data)
+    removed=removehaze(img_ori) # ทำการลบหมอก
+    current_timestamp = datetime.now() # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
+    if removed is not None: # ถ้า removed ไม่ใช่ค่า None ให้ทำตามเงื่อนไข
+            if old_time == '' or old_time != current_timestamp:  # ถ้า old_time มีค่า None หรือ ไม่เท่ากับเวลาปัจจุบัน ให้ทำตามเงื่อนไข (มีไว้เพื่อป้องกันการทำซ้ำ)
+                    data_to_add = {  # ข้อมูลที่ต้องการเพิ่มลงฐานข้อมูล
+                    "img_original": streaming, # รูปภาพ base64 ต้นฉบับ
+                    "img_removed": removed, # รูปภาพ base64 ที่ผ่านการลบหมอก
+                    "log": { # หัวข้อ log
+                        "date": current_timestamp, # เวลาปัจจุบัน
+                    }
+                }   
+                    old_time = current_timestamp # เก็บ current_timestamp ไว้ใน old_time เพื่อใช้ในการเปรียบเทียบครั้งต่อไป
+                    document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
+    return print("added streaming") # print add streaming 
 
 def camera(): # function camera คือฟังก์ชั่นหลักของหน้า Streaming    
     st.session_state.running=True # กำหนดค่า sestion_state.running ให้เป็น None 
+    
     #st.session_state.running=True # กำหนด sestion_state.running ให้เป็น True เพื่อเริ่มการทำงานของกล้องอัตโนมัติ
     st.set_page_config(layout="centered") # set หน้า page เป็นความ centered (จอแคบ)
     st.header(":rainbow[Haze Removal Image Enchancement Perspective for IoT device]",) # แสดง header
@@ -113,10 +112,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
     #cap = cv2.VideoCapture(ip_camera_url)  # อ่าน video จาก urlที่ได้
     image_slot = st.empty() # สร้างพื้นที่ empty สำหรับวางที่ streaming
     col = st.columns(3) # สร้าง column 3 ช่อง สำหรับเสร็จกึ่งกลางให้ปุ่ม
-    # auto_bot = st.button('autocap')
-    # if auto_bot:
-    #     auto_cap()
-    #     auto_bot=False
+ 
     with col[1]: # ช่องสอง
         capture_button = st.button('Capture Image',use_container_width=True) # สร้างปุ่มสำหรับบันทึกภาพจากกล้องถ่ายทอดสด
 
@@ -152,10 +148,10 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
                 document_ref, _ = collection_ref.add(data_to_add) # ทำการเพิ่มข้อมูลไปยังฐานข้อมูล
                 capture_button=False
             
-for hour in range(0, 24): # กำหนดขอบเขตการทำงานคือ 0 นาฬิกาถึง 24 นาฬิกา
-    for minute in range(0, 60, 2): # กำหนดขอบเขตการทำงานของนาทีคือ เริ่มที่ 0 และสิ้นสุดที่ 60 นาที แล้วจะทำงานทุก ๆ 30 นาที
-       scheduled_time = {'hour': str(hour).zfill(2), 'minute': str(minute).zfill(2)} # ทำการแปลง ชั่วโมงและนาที เป็นตัวเลข
-       scheduler.add_job(auto_cap, trigger='cron', **scheduled_time) # กำหนดให้บันทึกรูปอัตโนมัติ ทุกๆ 30 นาที
+#for hour in range(6, 17): # กำหนดขอบเขตการทำงานคือ 0 นาฬิกาถึง 24 นาฬิกา
+   # for minute in range(0, 60, 30): # กำหนดขอบเขตการทำงานของนาทีคือ เริ่มที่ 0 และสิ้นสุดที่ 60 นาที แล้วจะทำงานทุก ๆ 30 นาที
+     #   scheduled_time = {'hour': str(hour).zfill(2), 'minute': str(minute).zfill(2)} # ทำการแปลง ชั่วโมงและนาที เป็นตัวเลข
+    #    scheduler.add_job(auto_cap, trigger='cron', **scheduled_time) # กำหนดให้บันทึกรูปอัตโนมัติ ทุกๆ 30 นาที
            
 scheduler.start() # เริ่มการทำงานในเบื้องหลัง
 if __name__ == "__main__":
