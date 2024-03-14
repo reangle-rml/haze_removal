@@ -23,8 +23,8 @@ except ValueError:
     initialize_app(cred, {"databaseURL": "https://haze-remover-default-rtdb.asia-southeast1.firebasedatabase.app/"})
     print("Firebase app initialized.")
 
-if 'send' not in st.session_state: # ถ้า session_state ไม่มีชื่อ send ให้ทำตามเงื่อนไข
-    st.session_state.send = False # กำหนดให้ session_state.send ให้เป็น False เพื่อกำหนดค่าเริ่มต้น
+if 'sendimg' not in st.session_state: # ถ้า session_state ไม่มีชื่อ send ให้ทำตามเงื่อนไข
+    st.session_state.sendimg = False # กำหนดให้ session_state.send ให้เป็น False เพื่อกำหนดค่าเริ่มต้น
 
 dab = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json 
 scheduler = BackgroundScheduler() # กำหนดตัวแปร ที่ใช้ในการทำงานเบื้องหลัง
@@ -83,7 +83,7 @@ def removehaze(img): # function สำหรับการลบหมอก �
     return base64 # return base64 รูปภาพที่ทำการลบหมอกและปรับแต่งแล้ว
 
 def auto_cap(): # function auto_cap เป็น funtion สำหรับการทำงานเบื้องหลัง หรือการทำงานตามเวลาที่กำหนด
-    if st.session_state.send == False:
+    if st.session_state.sendimg == False:
         live_data = live.get()
         streaming = "data:image/jpeg;base64,"+live_data
         img_ori = base64_to_img(live_data)
@@ -98,7 +98,7 @@ def auto_cap(): # function auto_cap เป็น funtion สำหรับก�
                         }
                     }   
                         document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
-                        st.session_state.send = True
+                        st.session_state.sendimg = True
         return print("Auto Capture!") # print add streaming 
     else:
         return print("Already send!")
