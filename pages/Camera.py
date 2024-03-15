@@ -149,7 +149,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
                 capture_button=False
             
 #for hour in range(6, 17): # กำหนดขอบเขตการทำงานคือ 0 นาฬิกาถึง 24 นาฬิกา
-    #for minute in range(0, 60, 2): # กำหนดขอบเขตการทำงานของนาทีคือ เริ่มที่ 0 และสิ้นสุดที่ 60 นาที แล้วจะทำงานทุก ๆ 30 นาที
+    #for minute in range(0, 60, 30): # กำหนดขอบเขตการทำงานของนาทีคือ เริ่มที่ 0 และสิ้นสุดที่ 60 นาที แล้วจะทำงานทุก ๆ 30 นาที
        # scheduled_time = {'hour': str(hour).zfill(2), 'minute': str(minute).zfill(2)} # ทำการแปลง ชั่วโมงและนาที เป็นตัวเลข
         #scheduler.add_job(auto_cap, trigger='cron', **scheduled_time) # กำหนดให้บันทึกรูปอัตโนมัติ ทุกๆ 30 นาที
            
