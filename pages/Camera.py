@@ -90,14 +90,16 @@ def send_data():
         print("Data sent at:", datetime.now())
         data_sent = True
 
-def auto_cap(): # function auto_cap เป็น funtion สำหรับการทำงานเบื้องหลัง หรือการทำงานตามเวลาที่กำหนด
-    global data_sent
-    if data_sent == True:
-        live_data = live.get()
-        streaming = "data:image/jpeg;base64,"+live_data
-        img_ori = base64_to_img(live_data)
-        removed=removehaze(img_ori) # ทำการลบหมอก
-        current_timestamp = datetime.now() # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
+def auto_capture(): # function auto_cap เป็น funtion สำหรับการทำงานเบื้องหลัง หรือการทำงานตามเวลาที่กำหนด
+    global old_time
+
+    live_data = live.get()
+    streaming = "data:image/jpeg;base64,"+live_data
+    img_ori = base64_to_img(live_data)
+    removed=removehaze(img_ori) # ทำการลบหมอก
+    current_timestamp = datetime.now() # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
+    if old_time != current_timestamp: 
+        old_time = current_timestamp
         if removed is not None: # ถ้า removed ไม่ใช่ค่า None ให้ทำตามเงื่อนไข
                         data_to_add = {  # ข้อมูลที่ต้องการเพิ่มลงฐานข้อมูล
                         "img_original": streaming, # รูปภาพ base64 ต้นฉบับ
@@ -108,9 +110,8 @@ def auto_cap(): # function auto_cap เป็น funtion สำหรับก�
                     }   
                         old_time = current_timestamp # เก็บ current_timestamp ไว้ใน old_time เพื่อใช้ในการเปรียบเทียบครั้งต่อไป
                         document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
-        return print("auto capture!") # print add streaming 
-    else:
-        return print("already sent")
+                        return print("auto capture!") # print add streaming 
+
 
 def camera(): # function camera คือฟังก์ชั่นหลักของหน้า Streaming    
     st.session_state.running=True # กำหนดค่า sestion_state.running ให้เป็น None 
@@ -158,11 +159,8 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
                 document_ref, _ = collection_ref.add(data_to_add) # ทำการเพิ่มข้อมูลไปยังฐานข้อมูล
                 capture_button=False
             
-for hour in range(6, 17): # กำหนดขอบเขตการทำงานคือ 0 นาฬิกาถึง 24 นาฬิกา
-    for minute in range(0, 60, 30): # กำหนดขอบเขตการทำงานของนาทีคือ เริ่มที่ 0 และสิ้นสุดที่ 60 นาที แล้วจะทำงานทุก ๆ 30 นาที
-        scheduled_time = {'hour': str(hour).zfill(2), 'minute': str(minute).zfill(2)} # ทำการแปลง ชั่วโมงและนาที เป็นตัวเลข
-        scheduler.add_job(auto_cap, trigger='cron', **scheduled_time) # กำหนดให้บันทึกรูปอัตโนมัติ ทุกๆ 30 นาที
-        scheduler.add_job(send_data, 'interval', minutes=30)
+scheduler.add_job(auto_capture, trigger='cron', hour='6-17', minute='*/30')
+
            
 scheduler.start() # เริ่มการทำงานในเบื้องหลัง
 if __name__ == "__main__":
