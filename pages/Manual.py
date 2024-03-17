@@ -1,7 +1,5 @@
 import streamlit as st
 
-st.session_state.button = False # set state button ให้เป็น False เพื่อยกเลิก session สำหรับ ค้นหา ในหน้า Gallery
-
 def manual(): # function manual คือฟังก์ชั่นหลักสำหรับ page Manual
     st.set_page_config(layout="wide") # set หน้า page เป็นความ wide (จอกว้าง)
     head=st.columns(3) # สร้าง columns 3 ช่อง
