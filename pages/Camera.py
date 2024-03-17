@@ -100,7 +100,7 @@ def auto_cap(): # function auto_cap เป็น funtion สำหรับก�
                 }   
                     old_time = current_timestamp # เก็บ current_timestamp ไว้ใน old_time เพื่อใช้ในการเปรียบเทียบครั้งต่อไป
                     document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
-    return print("added streaming") # print add streaming 
+    return print("auto capture") # print add streaming 
 
 def camera(): # function camera คือฟังก์ชั่นหลักของหน้า Streaming    
     st.session_state.running=True # กำหนดค่า sestion_state.running ให้เป็น None 
