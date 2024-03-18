@@ -10,6 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Run autorun.py
+        run: python autorun.py
+        
       - name: Checkout code
         uses: actions/checkout@v2
 
