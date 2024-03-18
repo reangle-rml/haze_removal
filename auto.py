@@ -53,7 +53,7 @@ def upload_data_to_firestore():
 
 # สร้างตัวตรวจสอบเวลาและทำงาน
 def check_and_upload():
-    current_time = datetime.time.now(thailand_zone)
+    current_time = time.now(thailand_zone)
     if start_time.time() <= current_time <= end_time.time():
         auto_cap()
     print(current_time)
@@ -72,7 +72,7 @@ def auto_cap(): # function auto_cap เป็น funtion สำหรับก�
     streaming = "data:image/jpeg;base64,"+live_data
     img_ori = base64_to_img(live_data)
     removed=removehaze(img_ori) # ทำการลบหมอก
-    current_timestamp = datetime.datetime.now(thailand_zone) # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
+    current_timestamp = datetime.now(thailand_zone) # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
     if removed is not None: # ถ้า removed ไม่ใช่ค่า None ให้ทำตามเงื่อนไข
                     data_to_add = {  # ข้อมูลที่ต้องการเพิ่มลงฐานข้อมูล
                     "img_original": streaming, # รูปภาพ base64 ต้นฉบับ
