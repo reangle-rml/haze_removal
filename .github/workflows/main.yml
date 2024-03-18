@@ -11,7 +11,9 @@ jobs:
 
     steps:
       - name: Run autorun.py
-        run: python auto.py
+        run: |
+          cd $GITHUB_WORKSPACE  
+          python auto.py
         
       - name: Checkout code
         uses: actions/checkout@v2
