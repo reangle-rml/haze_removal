@@ -117,7 +117,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
                     st.subheader("After") # แสดง subheader 
                     st.image(removed, channels="BGR", use_column_width=True) # แสดงรูปหลังผ่านการลบหมอก
                     st.image(image=base64_to_histogram(removed),use_column_width=True) # แสดง histogram ของรูปภาพที่ผ่านการลบหมอก
-                current_timestamp = datetime.datetime.now(thailand_zone) # ดึงเวลาปัจจุบันเก็บไว้ที่ current_timestamp                     
+                current_timestamp = datetime.now(thailand_zone) # ดึงเวลาปัจจุบันเก็บไว้ที่ current_timestamp                     
                 if removed is not None: # ถ้ามีการลบหมอกเกิดขึ้น จะทำตามเงื่อนไข
                     data_to_add = { # ข้อมูลที่ต้องการเพิ่มไปที่ฐานข้อมูล
                     "img_original": streaming, # รูปภาพต้นฉบับ
