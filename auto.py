@@ -82,10 +82,11 @@ def auto_cap(): # function auto_cap เป็น funtion สำหรับก�
                     }
                 }   
                     document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
+                    time.sleep(20)
     return print("Auto Capture!") # print add streaming 
 
 # ตั้งค่าตารางเวลาให้ทำงานทุกๆ 30 นาที
-schedule.every(30).minutes.do(check_and_upload)
+schedule.every(2).minutes.do(check_and_upload)
 
 # ลูปเพื่อตรวจสอบตารางเวลาและทำงาน
 while True:
