@@ -30,7 +30,7 @@ scheduler = BackgroundScheduler() # กำหนดตัวแปร ที่�
 document_ref = '' # กำหนดตัวแปร document_ref
 collection_ref = dab.collection("Images_camera") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
 live = db.reference("image_original") # สร้างเส้นทางอ้างอิงไปยัง image_original ไปยัง realtime database
-old_time = '' # กำหนดตัวแปร old_time 
+thailand_zone = timezone('Asia/Bangkok')
 
 def base64_to_histogram(base64_image): # function ที่เปลี่ยนจาก base64 ให้เป็น histogram
     binary_image = base64.b64decode(base64_image) # ทำการแปลง base64 ให้เป็น binary
@@ -116,7 +116,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
                     st.subheader("After") # แสดง subheader 
                     st.image(removed, channels="BGR", use_column_width=True) # แสดงรูปหลังผ่านการลบหมอก
                     st.image(image=base64_to_histogram(removed),use_column_width=True) # แสดง histogram ของรูปภาพที่ผ่านการลบหมอก
-                current_timestamp = datetime.now() # ดึงเวลาปัจจุบันเก็บไว้ที่ current_timestamp                     
+                current_timestamp = datetime.datetime.now(thailand_zone) # ดึงเวลาปัจจุบันเก็บไว้ที่ current_timestamp                     
                 if removed is not None: # ถ้ามีการลบหมอกเกิดขึ้น จะทำตามเงื่อนไข
                     data_to_add = { # ข้อมูลที่ต้องการเพิ่มไปที่ฐานข้อมูล
                     "img_original": streaming, # รูปภาพต้นฉบับ
