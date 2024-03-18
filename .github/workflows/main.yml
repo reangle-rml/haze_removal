@@ -12,8 +12,7 @@ jobs:
     steps:
       - name: Run autorun.py
         run: |
-          cd pages
-          python upload.py
+          python $GITHUB_WORKSPACE/auto.py
         
       - name: Checkout code
         uses: actions/checkout@v2
