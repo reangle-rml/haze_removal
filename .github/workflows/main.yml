@@ -11,6 +11,7 @@ jobs:
 
     steps:
       - name: Run autorun.py
+        working-directory: haze_removal
         run: python auto.py
         
       - name: Checkout code
