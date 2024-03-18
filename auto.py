@@ -53,7 +53,7 @@ def upload_data_to_firestore():
 
 # สร้างตัวตรวจสอบเวลาและทำงาน
 def check_and_upload():
-    current_time = time.now(thailand_zone)
+    current_time = datetime.now(thailand_zone).time()
     if start_time.time() <= current_time <= end_time.time():
         auto_cap()
     print(current_time)
