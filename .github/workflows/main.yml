@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Run autorun.py
         run: |
+          ls
+          ls /home/runner/work/haze_removal/haze_removal/
           python /home/runner/work/haze_removal/haze_removal/auto.py
         
       - name: Checkout code
