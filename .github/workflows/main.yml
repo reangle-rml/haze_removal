@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Run autorun.py
         run: |
-          cd haze_removal
-          python pages/upload.py
+          cd pages
+          python upload.py
         
       - name: Checkout code
         uses: actions/checkout@v2
