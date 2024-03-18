@@ -8,3 +8,4 @@ image-dehazer==0.0.9
 apscheduler
 streamlit-modal
 firebase-admin
+firebase-admin schedule
