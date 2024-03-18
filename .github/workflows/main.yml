@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Run autorun.py
         run: |
-          cd /
+          cd 
           python pages/upload.py
         
       - name: Checkout code
