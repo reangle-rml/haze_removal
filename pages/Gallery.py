@@ -126,10 +126,10 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
                     image_before = data.get("img_original", None) # ดึงค่า img_original มาจากฐานข้อมูล หากไม่มีให้เป็น None เก็บไว้ที่ image_before
                     unique_identifier = data.get('log', {}).get('date', None)
                     image_removed = data.get("img_removed", None) # ดึงค่า img_removed มาจากฐานข้อมูล หากไม่มีให้เป็น None เก็บไว้ที่ image_removed
-                    log_time = data.get("log",None) # ดึงค่า log หากไม่มีให้เป็น None เก็บไว้ที่ log_time
-                    log_time = log_time["date"] + datetime.timedelta(hours=7)
-                    show_date = log_time["date"].strftime("Date %Y-%m-%d") # ดึงค่า date จาก log_time แล้วแปลงเป็น ปี-เดือน-วัน เก็บไว้ที่ show_date
-                    show_time = log_time["date"].strftime("Time %H:%M:%S") # ดึงค่า date จาก log_time แล้วแปลงเป็น ชั่วโมง-นาที-วินาทีเก็บไว้ที่ show_time
+                    log_time = data.get("log", {}).get("date", None)
+                    log_time = log_time + datetime.timedelta(hours=7)  # เพิ่ม 7 ชั่วโมงเพื่อแปลงเป็นเวลาท้องถิ่น (UTC+7)
+                    show_date = log_time.strftime("Date %Y-%m-%d") # ดึงค่า date จาก log_time แล้วแปลงเป็น ปี-เดือน-วัน เก็บไว้ที่ show_date
+                    show_time = log_time.strftime("Time %H:%M:%S") # ดึงค่า date จาก log_time แล้วแปลงเป็น ชั่วโมง-นาที-วินาทีเก็บไว้ที่ show_time
                     if i % 6 == 0: # ถ้า i หรือจำนวนรูปมีจำนวนที่ หาร 6 แล้วมีเศษ = 0 จะเข้าเงื่อนไข
                         col = st.columns(6) # สร้าง column ใหม่ 6 ช่องสำหรับรองรับรูปที่จะนำมาแสดง
                     if image_before: # ถ้ามีข้อมูลในตัวแปร image_before
