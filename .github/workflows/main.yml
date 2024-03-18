@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Run autorun.py
         working-directory: haze_removal
-        run: python auto.py
+        run: python haze_removal/auto.py
         
       - name: Checkout code
         uses: actions/checkout@v2
