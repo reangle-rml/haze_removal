@@ -11,7 +11,7 @@ from datetime import datetime
 import requests
 import io
 import image_dehazer
-
+from pytz import timezone
 db = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
 thailand_zone = timezone('Asia/Bangkok')
 def base64_to_histogram(base64_image): # function ที่เปลี่ยนจาก base64 ให้เป็น histogram
