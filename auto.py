@@ -25,7 +25,7 @@ start_time = datetime.strptime("06:00:00", "%H:%M:%S")
 end_time = datetime.strptime("17:00:00", "%H:%M:%S")
 collection_ref = dab.collection("Images_camera") # สร้างเส้นทางอ้างอิงไปยัง Images ในฐานข้อมูล
 live = db.reference("image_original") # สร้างเส้นทางอ้างอิงไปยัง image_original ไปยัง realtime database
-
+thailand_zone = timezone('Asia/Bangkok')
 # เชื่อมต่อกับ Firestore
 
 def frame_to_base64(frame):
@@ -53,7 +53,7 @@ def upload_data_to_firestore():
 
 # สร้างตัวตรวจสอบเวลาและทำงาน
 def check_and_upload():
-    current_time = datetime.now().time()
+    current_time = datetime.time.now(thailand_zone)
     if start_time.time() <= current_time <= end_time.time():
         auto_cap()
     print(current_time)
@@ -72,7 +72,7 @@ def auto_cap(): # function auto_cap เป็น funtion สำหรับก�
     streaming = "data:image/jpeg;base64,"+live_data
     img_ori = base64_to_img(live_data)
     removed=removehaze(img_ori) # ทำการลบหมอก
-    current_timestamp = datetime.now() # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
+    current_timestamp = datetime.datetime.now(thailand_zone) # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
     if removed is not None: # ถ้า removed ไม่ใช่ค่า None ให้ทำตามเงื่อนไข
                     data_to_add = {  # ข้อมูลที่ต้องการเพิ่มลงฐานข้อมูล
                     "img_original": streaming, # รูปภาพ base64 ต้นฉบับ
