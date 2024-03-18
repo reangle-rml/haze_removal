@@ -13,7 +13,7 @@ import io
 import image_dehazer
 
 db = firestore.Client.from_service_account_json("firestore_key.json") # เชื่อมต่อกับ ฐานข้อมูล firebase จากไฟล์ firestore-key.json
-
+thailand_zone = timezone('Asia/Bangkok')
 def base64_to_histogram(base64_image): # function ที่เปลี่ยนจาก base64 ให้เป็น histogram
     binary_image = base64.b64decode(base64_image) # ทำการแปลง base64 ให้เป็น binary
     image_np = np.frombuffer(binary_image, dtype=np.uint8) # สร้าง numpy array จาก buffer binary ด้วย unit8
@@ -90,7 +90,7 @@ def main(): # function main เป็นฟังก์ชั่นหลัก�
         base_img = base64_to_img(base64_original) # แปลง base64 กลับไปเป็นรูปภาพ แล้วเก็บไว้ที่ base_img
         img_removed = removehaze(base_img) # นำ base_img มาทำการลบหมอก
         base64_removed = base64_format(img_removed) # นำรูปภาพที่ลบหมอกแล้วมาแปลงเป็น format base64
-        current_timestamp = datetime.now() # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
+        current_timestamp = datetime.datetime.now(thailand_zone) # ดึงเวลาปัจจุบันมาเก็บไว้ที่ current_timestamp
         if img_removed is not None: # ถ้ามีรูปลบหมอก ให้ทำตามเงื่อนไข
             data_to_add = { # ข้อมูลที่ต้องการจะเพิ่มลงฐานข้อมูล
                 "img_original": base64_original_format, # รูปต้นฉบับก่อนลบหมอก
