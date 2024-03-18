@@ -111,6 +111,8 @@ def auto_capture(): # function auto_cap เป็น funtion สำหรับ�
                         old_time = current_timestamp # เก็บ current_timestamp ไว้ใน old_time เพื่อใช้ในการเปรียบเทียบครั้งต่อไป
                         document_ref, _ = collection_ref.add(data_to_add) # ทำการบันทึกข้อมูลลงฐา่นข้อมูล
                         return print("auto capture!") # print add streaming 
+    else:
+        return print("already send")
 
 
 def camera(): # function camera คือฟังก์ชั่นหลักของหน้า Streaming    
@@ -132,6 +134,7 @@ def camera(): # function camera คือฟังก์ชั่นหลัก
         streaming = "data:image/jpeg;base64,"+live_data
         image_slot.image(streaming,use_column_width=True)
         if capture_button: # เมื่อมีการกดปุ่มบุนทึกภาพนิ่งจากกล้องถ่ายทอดสด ให้ทำตามเงื่อนไข
+                print("Print Check")
                 img_ori = base64_to_img(live_data)
                 removed=removehaze(img_ori) # ทำการลบหมอก
                 col1, col2 = st.columns(2) #สร้าง column ขึ้นมา 2 ช่อง
