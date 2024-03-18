@@ -101,7 +101,7 @@ def gallery(): # function gallery คือ ฟังก์ชั่นหลั
     if type_selection=='Upload':
         collection_ref1 = db.collection("Images_upload")
     elif type_selection=='Camera':
-        collection_ref1 = db.collection("Images_camera2")
+        collection_ref1 = db.collection("Images_camera")
     docs1 = collection_ref1.stream() # ดึงข้อมูลจากเส้นทางอ้างอิง
     if(search_button):
         st.session_state.result = []
